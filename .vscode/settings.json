@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "terminal.h": "c",
+        "stdbool.h": "c",
+        "types.h": "c",
+        "conversion.h": "c",
+        "charvector.h": "c",
+        "keyboard.h": "c",
+        "str.h": "c",
+        "string.h": "c"
+    }
+}
