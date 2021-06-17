@@ -10,6 +10,22 @@ void Initialize(){
     freeList->next = null;
 }
 
+void Merge(){
+    struct block *prev, *curr;
+
+    curr = freeList;
+
+    while(curr->next->next != null){
+        if(curr && curr->next && curr->next->next){
+            curr->size += curr->next->size + sizeof(struct block);
+            curr->next = curr->next->next;
+        }
+        
+        prev = curr;
+        curr = curr->next;
+    }
+}
+
 void Split(struct block *fSlot, size_t size){
     struct block *new = (void*)((void*) fSlot+size+sizeof(struct block));
     new->size = (fSlot->size) - size - sizeof(struct block);
@@ -23,9 +39,10 @@ void Split(struct block *fSlot, size_t size){
 void *Malloc(size_t size){
     struct block *prev, *curr;
     void *result;
+
     if(!(freeList->size)) Initialize();
     curr = freeList;
-    
+
     while( ((curr->size < size) || curr->free == 0) && curr->next != null){
         prev = curr;
         curr = curr->next;
@@ -47,24 +64,8 @@ void *Malloc(size_t size){
     }
 }
 
-void Merge(){
-    struct block *prev, *curr;
-
-    curr = freeList;
-
-    while(curr->next != null){
-    if(curr->free && curr->next->free){
-        curr->size += curr->next->size + sizeof(struct block);
-        curr->next = curr->next->next;
-    }
-    
-    prev = curr;
-    curr = curr->next;
-    }
-}
-
 void Free(void *ptr){
-    if((void*)memory <= ptr && ptr <= (void*)(memory + MEMORY_SIZE)){
+     if((void*)memory <= ptr && ptr <= (void*)(memory + 20000)){
         struct block *curr = ptr;
         --curr;
         curr->free = 1;

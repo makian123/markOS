@@ -1,4 +1,5 @@
 #include "lib/string.h"
+#include "lib/terminal.h"
 
 void StringCreate(struct string *str, uint8_t *arr){
     size_t index = 0;
@@ -43,22 +44,28 @@ uint8_t StringGetAt(struct string *str, size_t pos){
 }
 
 void StringAdd(struct string *str, uint8_t ch){
-    while(str->next != null){
+    while(str->next->next != null){
         str = str->next;
     }
     str->next = (struct string*) Malloc(sizeof(struct string));
-    str = str->next;
-    str->data = ch;
+    str->next->data = ch;
+    str->next->next = (struct string*) Malloc(sizeof(struct string));
 }
 
 void StringAddFirst(struct string *str, uint8_t ch){
-    while(str->next != null){
+    struct string *temp;
+
+    temp = (struct string*) Malloc(sizeof(struct string*));
+    temp->data = ch;
+    temp->next = str;
+
+    str = temp;
+}
+
+void PopBack(struct string *str){
+    while(str->next->next != null){
         str = str->next;
     }
 
-    struct string *temp;
-    temp = (struct string*) Malloc(sizeof(struct string));
-    temp->data = ch;
-    temp->next = null;
-    str->next = temp;
+    Free(str->next);
 }

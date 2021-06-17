@@ -16,4 +16,6 @@ uint8_t StringGetAt(struct string *str, size_t pos);
 void StringAdd(struct string *str, uint8_t ch);
 void StringAddFirst(struct string *str, uint8_t ch);
 
+void PopBack(struct string *str);
+
 #endif

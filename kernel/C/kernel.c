@@ -20,9 +20,7 @@ void kmain(void){
     //Input
     struct string *temp;
     StringCreate(temp, "asd");
-    printString(temp);
-    newLine();
-    StringAddFirst(temp, 'a');
+    StringAdd(temp, 'L');
     printString(temp);
     printChar('>', false);
     bool isCaps = true;
