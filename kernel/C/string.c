@@ -53,13 +53,30 @@ void StringAdd(struct string *str, uint8_t ch){
 }
 
 void StringAddFirst(struct string *str, uint8_t ch){
-    struct string *temp;
-
-    temp = (struct string*) Malloc(sizeof(struct string*));
+    struct string *temp = (struct string*) Malloc(sizeof(struct string));
     temp->data = ch;
     temp->next = str;
-
     str = temp;
+}
+
+size_t StringFind(struct string *str, uint8_t ch){
+    size_t index = 0;
+    while(str->next != null){
+        if(str->data == ch) break;
+        index++;
+        str = str->next;
+    }
+    return index;
+}
+
+void StringChangeAt(struct string *str, uint8_t ch, size_t pos){
+    while(pos > 0 && str->next != null){
+        str = str->next;
+        pos--;
+    }
+    if(pos == 0){
+        str->data = ch;
+    }
 }
 
 void PopBack(struct string *str){

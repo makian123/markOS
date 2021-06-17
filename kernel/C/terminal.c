@@ -18,10 +18,10 @@ void newLine(){
     clearCurrentLine();
 }
 
-void printChar(uint8_t c, bool userIn){
+void printChar(uint8_t c, bool userIn, uint8_t color){
     //if(userIn) addToCommand(c);
     const size_t index = terminalY * TERM_WIDTH + terminalX;
-    terminalBuffer[index] = vgaEnter(c, terminalColor);
+    terminalBuffer[index] = vgaEnter(c, color);
 
     terminalX++;
     if(terminalX == TERM_WIDTH){
@@ -65,13 +65,13 @@ void termClear(){
 
 void newInputLine(){
     newLine();
-    printChar('>', false);
+    printChar('>', false, terminalColor);
 }
 
 void printString(struct string *str){
     while(str->next != null){
         if(str->data == '\n') newLine();
-        else printChar(str->data, false);
+        else printChar(str->data, false, terminalColor);
         str = str->next;
     }
 }
@@ -96,5 +96,5 @@ void clearScreen(){
 
     terminalX = 0;
     terminalY = 0;
-    printChar('>', false);
+    printChar('>', false, terminalColor);
 }

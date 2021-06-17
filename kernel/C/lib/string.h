@@ -15,6 +15,8 @@ size_t StringLen(struct string *str);
 uint8_t StringGetAt(struct string *str, size_t pos);
 void StringAdd(struct string *str, uint8_t ch);
 void StringAddFirst(struct string *str, uint8_t ch);
+size_t StringFind(struct string *str, uint8_t ch);
+void StringChangeAt(struct string *str, uint8_t ch, size_t pos);
 
 void PopBack(struct string *str);
 

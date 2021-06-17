@@ -31,7 +31,7 @@ static inline uint8_t termColor(enum terminal_colors fg, enum terminal_colors bg
 }
 static inline uint16_t vgaEnter(uint8_t c, uint8_t color);
 void newLine();
-void printChar(uint8_t c, bool userIn);
+void printChar(uint8_t c, bool userIn, uint8_t color);
 void backspace();
 void clearCurrentLine();
 void termClear();

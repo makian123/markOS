@@ -6,8 +6,10 @@
 #include "lib/char.h"
 #include "lib/string.h"
 
+uint8_t defaultColor;
 
 void kmain(void){
+    defaultColor = termColor(COLOR_GREEN, COLOR_BLACK);
     termInit();
     termClear();
     outb(0x3D4, 0x0A);
@@ -21,8 +23,10 @@ void kmain(void){
     struct string *temp;
     StringCreate(temp, "asd");
     StringAdd(temp, 'L');
+    StringChangeAt(temp, 'F', 0);
     printString(temp);
-    printChar('>', false);
+
+    printChar('>', false, defaultColor);
     bool isCaps = true;
     startInput(isCaps);
 }
@@ -76,7 +80,7 @@ void startInput(bool* isCaps){
 
         default:
             ch = get_ascii_char(keycode, *isCaps);
-            printChar(ch, true);
+            printChar(ch, true, defaultColor);
             break;
         }
         sleep(0x02FFFFFF);
