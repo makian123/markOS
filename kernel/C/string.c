@@ -1,88 +1,62 @@
 #include "lib/string.h"
 #include "lib/terminal.h"
 
-void StringCreate(struct string *str, uint8_t *arr){
-    size_t index = 0;
-
-    if(arr[1] == null){
-        str->data = arr[0];
-        str->next = (struct string*) Malloc(sizeof(struct string));
-        str->next->data = '\0';
+size_t StrLen(uint8_t *str){
+    size_t len = 0;
+    while(str[len] != '\0'){
+        len++;
     }
-    
-    while(arr[index + 1] != null){
-        str->data = arr[index];
-        str->next = (struct string*) Malloc(sizeof(struct string));
-        str = str->next;
-        index++;
-    }
-    str->data = arr[index];
-    str->next = (struct string*) Malloc(sizeof(struct string));
-    str = str->next;
-    str->data = '\0';
+    return len;
 }
 
-size_t StringLen(struct string *str){
-    size_t index = 0;
-    while(str->next != null){
-        index++;
-        str = str->next;
-    }
-    return index;
+void StringAdd(uint8_t *str, uint8_t ch){
+    str[StrLen(str)] = ch;
+    str[StrLen(str) + 1] = (uint8_t*) Malloc(sizeof(uint8_t));
+    str[StrLen(str) + 1] = '\0';
 }
 
-uint8_t StringGetAt(struct string *str, size_t pos){
-    struct string *temp = str;
-    uint8_t val;
-    while(pos > 0){
-        temp = temp->next;
-        pos--;
+void StrClear(uint8_t *str){
+    size_t len = StrLen(str);
+    str[0] = '\0';
+    for(size_t i = len - 1; i > 0; --i){
+        str[i] = null;
     }
-    val = temp->data;
-
-    return val;
+    len = null;
 }
 
-void StringAdd(struct string *str, uint8_t ch){
-    while(str->next->next != null){
-        str = str->next;
+bool StrCmp(uint8_t *str1, uint8_t *str2){
+    if(StrLen(str1) != StrLen(str2)) return false;
+    for(size_t i = 0; i < StrLen(str1); ++i){
+        if(str1[i] != str2[i]) return false;
     }
-    str->next = (struct string*) Malloc(sizeof(struct string));
-    str->next->data = ch;
-    str->next->next = (struct string*) Malloc(sizeof(struct string));
+
+    return true;
 }
 
-void StringAddFirst(struct string *str, uint8_t ch){
-    struct string *temp = (struct string*) Malloc(sizeof(struct string));
-    temp->data = ch;
-    temp->next = str;
+void StrPopBack(uint8_t *str){
+    size_t len = StrLen(str);
+    str[len - 1] = '\0';
+    str[len] = null;
+}
+
+void StrReverse(uint8_t *str){
+    uint8_t temp = '\0';
+    size_t len = StrLen(str);
+    for(size_t i = 0; i <= (size_t)(len / 2); ++i){
+        temp = str[i];
+        str[i] = str[len - (1 + i)];
+        str[len - (1 + i)] = temp;
+    }
+    temp = null;
+}
+
+void itoa(uint8_t *str, uint64_t num){
+    StrClear(str);
+    uint8_t *temp = "\0";
+    while(num > 0){
+        StringAdd(temp, (uint8_t)((num % 10) + '0'));
+        num = num / 10;
+    }
     str = temp;
-}
-
-size_t StringFind(struct string *str, uint8_t ch){
-    size_t index = 0;
-    while(str->next != null){
-        if(str->data == ch) break;
-        index++;
-        str = str->next;
-    }
-    return index;
-}
-
-void StringChangeAt(struct string *str, uint8_t ch, size_t pos){
-    while(pos > 0 && str->next != null){
-        str = str->next;
-        pos--;
-    }
-    if(pos == 0){
-        str->data = ch;
-    }
-}
-
-void PopBack(struct string *str){
-    while(str->next->next != null){
-        str = str->next;
-    }
-
-    Free(str->next);
+    StrClear(temp);
 }

@@ -4,20 +4,13 @@
 #include "types.h"
 #include "malloc.h"
 
-typedef struct string{
-    uint8_t data;
-    struct string *next;
-}string;
+void StringAdd(uint8_t *str, uint8_t ch);
+size_t StrLen(uint8_t *str);
+void StrClear(uint8_t *str);
+bool StrCmp(uint8_t *str1, uint8_t *str2);
+void StrPopBack(uint8_t *str);
+void StrReverse(uint8_t *str);
 
-void StringCreate(struct string *str, uint8_t *arr);
-
-size_t StringLen(struct string *str);
-uint8_t StringGetAt(struct string *str, size_t pos);
-void StringAdd(struct string *str, uint8_t ch);
-void StringAddFirst(struct string *str, uint8_t ch);
-size_t StringFind(struct string *str, uint8_t ch);
-void StringChangeAt(struct string *str, uint8_t ch, size_t pos);
-
-void PopBack(struct string *str);
+void itoa(uint8_t *str, uint64_t num);
 
 #endif

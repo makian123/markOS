@@ -5,6 +5,7 @@
 #include "lib/kernel.h"
 #include "lib/char.h"
 #include "lib/string.h"
+#include "lib/malloc.h"
 
 uint8_t defaultColor;
 
@@ -20,14 +21,11 @@ void kmain(void){
 	outb(0x3D4, 0x0E);
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));*/
     //Input
-    struct string *temp;
-    StringCreate(temp, "asd");
-    StringAdd(temp, 'L');
-    StringChangeAt(temp, 'F', 0);
-    printString(temp);
-
     printChar('>', false, defaultColor);
-    bool isCaps = true;
+
+    uint8_t *str = "\0";
+
+    bool isCaps = false;
     startInput(isCaps);
 }
 
@@ -60,7 +58,7 @@ void sleep(uint32_t timerCount){
     waitForIO(timerCount);
 }
 
-void startInput(bool* isCaps){
+void startInput(bool *isCaps){
     uint8_t ch = 0;
     uint8_t keycode = 0;
     do{
@@ -68,10 +66,11 @@ void startInput(bool* isCaps){
         switch (keycode)
         {
         case KEY_ENTER:
-            //commandExecute();
+            ExecuteCommand();
             newInputLine();
             break;
         case KEY_BACKSPACE:
+            CommandPopBack();
             backspace();
             break;
         case KEY_TAB:
@@ -81,6 +80,7 @@ void startInput(bool* isCaps){
         default:
             ch = get_ascii_char(keycode, *isCaps);
             printChar(ch, true, defaultColor);
+            CommandAdd(ch);
             break;
         }
         sleep(0x02FFFFFF);

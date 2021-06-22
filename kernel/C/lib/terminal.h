@@ -39,13 +39,14 @@ void newInputLine();
 void termInit();
 void cursorUpdate();
 void addInputChar(uint8_t c);
-void printString(struct string *str);
+void printString(uint8_t *str);
 
 /*Commands*/
-void clearScreen();
-void addToCommand(uint8_t c);
-void commandExecute();
-
+void ClearScreen();
+void CommandAdd(uint8_t c);
+void ExecuteCommand();
+void CommandClear();
+void CommandPopBack();
 /*Vars*/
 
 #endif

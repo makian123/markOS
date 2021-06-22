@@ -69,6 +69,5 @@ void Free(void *ptr){
         struct block *curr = ptr;
         --curr;
         curr->free = 1;
-        Merge();
     }
 }

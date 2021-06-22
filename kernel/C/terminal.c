@@ -3,8 +3,7 @@
 size_t terminalY, terminalX;
 uint8_t terminalColor;
 uint16_t* terminalBuffer;
-const uint8_t* clsCommand = "Clear";
-
+uint8_t *command;
 
 static inline uint16_t vgaEnter(uint8_t c, uint8_t color){
     return (uint16_t) c | (uint16_t) color << 8;
@@ -68,15 +67,14 @@ void newInputLine(){
     printChar('>', false, terminalColor);
 }
 
-void printString(struct string *str){
-    while(str->next != null){
-        if(str->data == '\n') newLine();
-        else printChar(str->data, false, terminalColor);
-        str = str->next;
+void printString(uint8_t *str){
+    for(size_t i = 0; i < StrLen(str); ++i){
+        printChar(str[i], false, terminalColor);
     }
 }
 
 void termInit(){
+    command = '\0';
     terminalX = 0;
     terminalY = 0;
     terminalColor = termColor(COLOR_GREEN, COLOR_BLACK);
@@ -87,7 +85,8 @@ void termInit(){
 void cursorUpdate(){
     terminalBuffer[terminalY * TERM_WIDTH + terminalX] = vgaEnter('_', terminalColor);
 }
-void clearScreen(){
+
+void ClearScreen(){
     for(size_t y = 0; y < TERM_HEIGHT; ++y){
         for(size_t x = 0; x < TERM_WIDTH; ++x){
             terminalBuffer[y * TERM_WIDTH + x] = vgaEnter(' ', terminalColor);
@@ -97,4 +96,24 @@ void clearScreen(){
     terminalX = 0;
     terminalY = 0;
     printChar('>', false, terminalColor);
+}
+
+void CommandAdd(uint8_t ch){
+    StringAdd(command, ch);
+}
+
+void CommandClear(){
+    StrClear(command);
+}
+
+void CommandPopBack(){
+    if(StrLen(command) > 0) StrPopBack(command);
+}
+
+void ExecuteCommand(){
+    printString(command);
+    if(StrCmp(command, "clear\0")){
+        ClearScreen();
+    }
+    CommandClear();
 }
