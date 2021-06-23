@@ -1,10 +1,10 @@
 #include "lib/string.h"
 #include "lib/terminal.h"
 
-size_t StrLen(uint8_t *str){
+size_t StrLen(const uint8_t *str){
     size_t len = 0;
     while(str[len] != '\0'){
-        len++;
+        ++len;
     }
     return len;
 }
@@ -13,6 +13,13 @@ void StringAdd(uint8_t *str, uint8_t ch){
     str[StrLen(str)] = ch;
     str[StrLen(str) + 1] = (uint8_t*) Malloc(sizeof(uint8_t));
     str[StrLen(str) + 1] = '\0';
+}
+
+void StrCpy(uint8_t *str, uint8_t *input){
+    StrClear(str);
+    for(size_t i = 0; i < StrLen(input); ++i){
+        StringAdd(str, input[i]);
+    }
 }
 
 void StrClear(uint8_t *str){
@@ -24,13 +31,13 @@ void StrClear(uint8_t *str){
     len = null;
 }
 
-bool StrCmp(uint8_t *str1, uint8_t *str2){
-    if(StrLen(str1) != StrLen(str2)) return false;
-    for(size_t i = 0; i < StrLen(str1); ++i){
-        if(str1[i] != str2[i]) return false;
+bool StrCmp(const uint8_t *str1, const uint8_t *str2){
+    while(*str1 == *str2 && *str1 != '\0'){
+        str1++;
+        str2++;
     }
 
-    return true;
+    return (*str1 > *str2) - (*str1 < *str2) == 0 ? true : false;
 }
 
 void StrPopBack(uint8_t *str){

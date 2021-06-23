@@ -16,15 +16,14 @@ void kmain(void){
     outb(0x3D4, 0x0A);
     outb(0x3D5, 0x20);
     uint16_t pos = 10 * TERM_WIDTH + 3;
+    outb(REG_CTR, 15);
+    outb(REG_CTR, (uint8_t)(14 >> 8));
     /*outb(0x3D4, 0x0F);
 	outb(0x3D5, (uint8_t) (pos & 0xFF));
 	outb(0x3D4, 0x0E);
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));*/
     //Input
     printChar('>', false, defaultColor);
-
-    uint8_t *str = "\0";
-
     bool isCaps = false;
     startInput(isCaps);
 }
@@ -34,10 +33,10 @@ uint8_t inb(uint16_t port){
     asm volatile("inb %1, %0" : "=a"(ret) : "d"(port));
     return ret;
 }
-
 void outb(uint16_t port, uint8_t data){
     asm volatile("outb %0, %1" : "=a"(data) : "d"(port));
 }
+
 uint8_t getInput(){
     char ch = 0;
     while((ch = inb(KEYBOARD_PORT)) != 0){

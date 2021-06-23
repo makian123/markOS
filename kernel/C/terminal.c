@@ -5,6 +5,12 @@ uint8_t terminalColor;
 uint16_t* terminalBuffer;
 uint8_t *command;
 
+/*Commands*/
+uint8_t *CLS = "Clear\0";
+uint8_t *QUIT = "Quit\0";
+
+extern void shutdown();
+
 static inline uint16_t vgaEnter(uint8_t c, uint8_t color){
     return (uint16_t) c | (uint16_t) color << 8;
 }
@@ -68,13 +74,18 @@ void newInputLine(){
 }
 
 void printString(uint8_t *str){
-    for(size_t i = 0; i < StrLen(str); ++i){
-        printChar(str[i], false, terminalColor);
+    size_t i = 0;
+    while(str[i] != '\0'){
+        if(str[i] == '\n') newLine();
+        else printChar(str[i], false, terminalColor);
+        ++i;
     }
 }
 
 void termInit(){
-    command = '\0';
+    command = "ads\0";
+    StrClear(command);
+
     terminalX = 0;
     terminalY = 0;
     terminalColor = termColor(COLOR_GREEN, COLOR_BLACK);
@@ -89,7 +100,7 @@ void cursorUpdate(){
 void ClearScreen(){
     for(size_t y = 0; y < TERM_HEIGHT; ++y){
         for(size_t x = 0; x < TERM_WIDTH; ++x){
-            terminalBuffer[y * TERM_WIDTH + x] = vgaEnter(' ', terminalColor);
+            terminalBuffer[x * TERM_WIDTH + y] = vgaEnter(' ', terminalColor);
         }
     }
 
@@ -111,9 +122,11 @@ void CommandPopBack(){
 }
 
 void ExecuteCommand(){
-    printString(command);
-    if(StrCmp(command, "clear\0")){
+    if(StrCmp(command, CLS)){
         ClearScreen();
+    }
+    else if(StrCmp(command, QUIT)){
+        shutdown();
     }
     CommandClear();
 }

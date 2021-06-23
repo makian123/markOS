@@ -4,6 +4,8 @@
 #include "types.h"
 #include "string.h"
 
+#define REG_CTR 0x3d4
+
 enum terminal_colors{
     COLOR_BLACK = 0,
     COLOR_BLUE = 1,
@@ -43,10 +45,10 @@ void printString(uint8_t *str);
 
 /*Commands*/
 void ClearScreen();
+
 void CommandAdd(uint8_t c);
 void ExecuteCommand();
 void CommandClear();
 void CommandPopBack();
-/*Vars*/
 
 #endif
