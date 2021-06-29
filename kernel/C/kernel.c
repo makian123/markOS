@@ -29,10 +29,13 @@ void kmain(void){
 
     //Input done
     printChar('>', false, defaultColor);
+    printString(itoa(1234567890, 10));
     bool isCaps = false;
     startInput(isCaps);
 }
 
+
+//ASM functions in C
 uint8_t inb(uint16_t port){
     uint8_t ret;
     asm volatile("inb %1, %0" : "=a"(ret) : "d"(port));

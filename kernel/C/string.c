@@ -57,15 +57,26 @@ void StrReverse(uint8_t *str){
     temp = null;
 }
 
-void itoa(uint8_t *str, uint64_t num){
-    StrClear(str);
-    uint8_t *temp = "\0";
-    while(num > 0){
-        StringAdd(temp, (uint8_t)((num % 10) + '0'));
-        num = num / 10;
+uint8_t * itoa(sint64_t num, uint32_t base){
+    if(num == 0) return "0\0";
+
+    uint8_t *output = '\0';
+    bool isNegative = num < 0;
+
+    if(isNegative) num = num * -1;
+    StrClear(output);
+    while(num){
+        uint32_t r = num % base;
+        if(r >= 10) StringAdd(output, (65 + (r - 10)));
+        else StringAdd(output, (48 + r));
+
+        num = num / base;
     }
-    str = temp;
-    StrClear(temp);
+
+    if(isNegative) StringAdd(output, '-');
+
+    StrReverse(output);
+    return output;
 }
 
 uint8_t * strpbrk(const uint8_t *str, const uint8_t *ct){

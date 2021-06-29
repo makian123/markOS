@@ -26,7 +26,7 @@ start:
     call enable_paging
     
     lgdt [gdt64.pointer]
-    ;jmp gdt64.code:kernel_init
+    jmp gdt64.code:kernel_init
 
 
 check_multiboot:
