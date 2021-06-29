@@ -8,6 +8,7 @@ uint8_t *command;
 /*Commands*/
 uint8_t *CLS = "Clear\0";
 uint8_t *QUIT = "Quit\0";
+uint8_t *MAN = "Man\0";
 
 extern void shutdown();
 
@@ -97,18 +98,6 @@ void cursorUpdate(){
     terminalBuffer[terminalY * TERM_WIDTH + terminalX] = vgaEnter('_', terminalColor);
 }
 
-void ClearScreen(){
-    for(size_t y = 0; y < TERM_HEIGHT; ++y){
-        for(size_t x = 0; x < TERM_WIDTH; ++x){
-            terminalBuffer[x * TERM_WIDTH + y] = vgaEnter(' ', terminalColor);
-        }
-    }
-
-    terminalX = 0;
-    terminalY = 0;
-    printChar('>', false, terminalColor);
-}
-
 void CommandAdd(uint8_t ch){
     StringAdd(command, ch);
 }
@@ -123,7 +112,7 @@ void CommandPopBack(){
 
 void ExecuteCommand(){
     if(StrCmp(command, CLS)){
-        ClearScreen();
+        termClear();
     }
     else if(StrCmp(command, QUIT)){
         shutdown();

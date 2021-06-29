@@ -67,3 +67,29 @@ void itoa(uint8_t *str, uint64_t num){
     str = temp;
     StrClear(temp);
 }
+
+uint8_t * strpbrk(const uint8_t *str, const uint8_t *ct){
+    const uint8_t *sc1, *sc2;
+    for(sc1 = str; *sc1 != '\0'; ++sc1){
+        for (sc2 = ct; *sc2 != '\0'; ++sc2) {
+			if (*sc1 == *sc2)
+				return (char *)sc1;
+		}
+    }
+    return null;
+}
+
+uint8_t * strsep(uint8_t **str, const uint8_t *ch){
+    uint8_t *sBegin = *str;
+    uint8_t *end;
+
+    if(sBegin == null){
+        return null;
+    }
+    end = strpbrk(sBegin, ch);
+    if(end){
+        *end++ = '\0';
+    }
+    *str = end;
+    return sBegin;
+}

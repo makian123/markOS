@@ -44,7 +44,6 @@ void addInputChar(uint8_t c);
 void printString(uint8_t *str);
 
 /*Commands*/
-void ClearScreen();
 
 void CommandAdd(uint8_t c);
 void ExecuteCommand();

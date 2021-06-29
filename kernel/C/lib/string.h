@@ -12,6 +12,8 @@ void StrClear(uint8_t *str);
 bool StrCmp(const uint8_t *str1, const uint8_t *str2);
 void StrPopBack(uint8_t *str);
 void StrReverse(uint8_t *str);
+uint8_t * strpbrk(const uint8_t *str, const uint8_t *ct);
+uint8_t * strsep(uint8_t **str, const uint8_t *ch);
 
 void itoa(uint8_t *str, uint64_t num);
 

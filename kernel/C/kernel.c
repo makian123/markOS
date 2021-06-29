@@ -9,6 +9,10 @@
 
 uint8_t defaultColor;
 
+//Solves the stack check fail error when parsing addresses
+extern void __stack_chk_fail(void){
+}
+
 void kmain(void){
     defaultColor = termColor(COLOR_GREEN, COLOR_BLACK);
     termInit();
@@ -22,7 +26,8 @@ void kmain(void){
 	outb(0x3D5, (uint8_t) (pos & 0xFF));
 	outb(0x3D4, 0x0E);
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));*/
-    //Input
+
+    //Input done
     printChar('>', false, defaultColor);
     bool isCaps = false;
     startInput(isCaps);

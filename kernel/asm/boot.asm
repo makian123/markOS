@@ -4,6 +4,10 @@ extern kernel_init
 section .text
 bits 32
 
+;mov eax, cr0
+;and al, -2
+;mov cr0, eax
+
 error:
     mov dword [0xb8000], 0x4f524f45
     mov dword [0xb8004], 0x4f3a4f52
@@ -22,8 +26,8 @@ start:
     call enable_paging
     
     lgdt [gdt64.pointer]
-    
-    jmp gdt64.code:kernel_init
+    ;jmp gdt64.code:kernel_init
+
 
 check_multiboot:
     cmp eax, 0x36d76289
