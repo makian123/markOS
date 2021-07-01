@@ -6,6 +6,8 @@
 #include "lib/char.h"
 #include "lib/string.h"
 #include "lib/malloc.h"
+#include "lib/snake.h"
+#include "lib/system.h"
 
 uint8_t defaultColor;
 
@@ -28,41 +30,9 @@ void kmain(void){
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));*/
 
     //Input done
-    printChar('>', false, defaultColor);
-    printString(itoa(1234567890, 10));
+    SnakeStart();
     bool isCaps = false;
     startInput(isCaps);
-}
-
-
-//ASM functions in C
-uint8_t inb(uint16_t port){
-    uint8_t ret;
-    asm volatile("inb %1, %0" : "=a"(ret) : "d"(port));
-    return ret;
-}
-void outb(uint16_t port, uint8_t data){
-    asm volatile("outb %0, %1" : "=a"(data) : "d"(port));
-}
-
-uint8_t getInput(){
-    char ch = 0;
-    while((ch = inb(KEYBOARD_PORT)) != 0){
-        if(ch > 0)
-            return ch;
-        }
-    return ch;
-}
-void waitForIO(uint32_t timerCount){
-    while(1){
-    asm volatile("nop");
-    timerCount--;
-    if(timerCount <= 0)
-        break;
-    }
-}
-void sleep(uint32_t timerCount){
-    waitForIO(timerCount);
 }
 
 void startInput(bool *isCaps){

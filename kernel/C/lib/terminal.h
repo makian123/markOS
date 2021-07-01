@@ -42,6 +42,8 @@ void termInit();
 void cursorUpdate();
 void addInputChar(uint8_t c);
 void printString(uint8_t *str);
+uint8_t termGetAt(uint16_t xPos, uint16_t yPos);
+void termSetAt(uint16_t xPos, uint16_t yPos, uint8_t ch, uint8_t col);
 
 /*Commands*/
 

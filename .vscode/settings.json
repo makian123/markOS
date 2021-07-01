@@ -7,6 +7,10 @@
         "charvector.h": "c",
         "keyboard.h": "c",
         "str.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "malloc.h": "c"
+    },
+    "files.exclude": {
+        "**/*.o*": true
     }
 }

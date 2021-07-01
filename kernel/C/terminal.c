@@ -94,6 +94,12 @@ void termInit(){
     cursorUpdate();
 }
 
+uint8_t termGetAt(uint16_t xPos, uint16_t yPos){ return terminalBuffer[yPos * TERM_WIDTH + xPos]; }
+
+void termSetAt(uint16_t xPos, uint16_t yPos, uint8_t ch, uint8_t col){
+    terminalBuffer[yPos * TERM_WIDTH + xPos] = vgaEnter(ch, col);
+}
+
 void cursorUpdate(){
     terminalBuffer[terminalY * TERM_WIDTH + terminalX] = vgaEnter('_', terminalColor);
 }
