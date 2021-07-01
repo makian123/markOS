@@ -8,6 +8,7 @@
 #include "lib/malloc.h"
 #include "lib/snake.h"
 #include "lib/system.h"
+#include "lib/osMath.h"
 
 uint8_t defaultColor;
 
@@ -29,7 +30,7 @@ void kmain(void){
 	outb(0x3D4, 0x0E);
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));*/
 
-    //Input done
+    printChar('>', false, defaultColor);
     SnakeStart();
     bool isCaps = false;
     startInput(isCaps);

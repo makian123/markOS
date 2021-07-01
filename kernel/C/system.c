@@ -1,6 +1,8 @@
 #include "lib/system.h"
 #include "lib/keyboard.h"
 
+uint32_t ticks = 0;
+
 uint8_t inb(uint16_t port){
     uint8_t ret;
     asm volatile("inb %1, %0" : "=a"(ret) : "d"(port));
@@ -19,6 +21,12 @@ uint8_t getInput(){
     return ch;
 }
 
+uint8_t getInputNoLoop(){
+    char ch = 0;
+    ch = inb(KEYBOARD_PORT);
+    return ch;
+}
+
 void waitForIO(uint32_t timerCount){
     while(1){
         asm volatile("nop");
@@ -27,6 +35,12 @@ void waitForIO(uint32_t timerCount){
             break;
     }
 }
-void sleep(uint32_t timerCount){
-    waitForIO(timerCount);
+
+void sleep(uint32_t seconds){
+    uint32_t timerTicks;
+    timerTicks = ticks + (seconds * 25000000);
+    while(ticks < timerTicks){
+        ticks = ticks + 1;
+    }
+    ticks = 0;
 }
