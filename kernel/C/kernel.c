@@ -6,14 +6,19 @@
 #include "lib/char.h"
 #include "lib/string.h"
 #include "lib/malloc.h"
-#include "lib/snake.h"
 #include "lib/system.h"
 #include "lib/osMath.h"
+#include "lib/gameRPG.h"
 
 uint8_t defaultColor;
 
 //Solves the stack check fail error when parsing addresses
+//This will definitively cause some problems
 extern void __stack_chk_fail(void){
+    newLine();
+    printString("Error: stack check fail\0");
+    newLine();
+    newInputLine();
 }
 
 void kmain(void){
@@ -31,7 +36,8 @@ void kmain(void){
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));*/
 
     printChar('>', false, defaultColor);
-    SnakeStart();
+    GameInit();
+
     bool isCaps = false;
     startInput(isCaps);
 }
@@ -61,6 +67,6 @@ void startInput(bool *isCaps){
             CommandAdd(ch);
             break;
         }
-        sleep(0x02FFFFFF);
+        waitForIO(0x02FFFFFF);
     }while(ch > 0);
 }
