@@ -11,7 +11,8 @@
         "malloc.h": "c",
         "gamerpg.h": "c",
         "system.h": "c",
-        "stivale2.h": "c"
+        "stivale2.h": "c",
+        "osmath.h": "c"
     },
     "files.exclude": {
         "**/*.o*": true

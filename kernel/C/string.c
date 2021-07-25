@@ -1,5 +1,4 @@
 #include "lib/string.h"
-#include "lib/terminal.h"
 
 size_t StrLen(const uint8_t *str){
     size_t len = 0;

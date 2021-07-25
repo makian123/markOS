@@ -36,9 +36,18 @@ void waitForIO(uint32_t timerCount){
     }
 }
 
-void sleep(uint32_t seconds){
+void sleep(uint32_t sec){
     uint32_t timerTicks;
-    timerTicks = ticks + (seconds * 25000000);
+    timerTicks = ticks + (sec * 25000000);
+    while(ticks < timerTicks){
+        ticks = ticks + 1;
+    }
+    ticks = 0;
+}
+
+void sleepms(uint32_t ms){
+    uint32_t timerTicks;
+    timerTicks = ticks + (ms * 25000);
     while(ticks < timerTicks){
         ticks = ticks + 1;
     }
