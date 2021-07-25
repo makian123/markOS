@@ -1,1 +1,0 @@
-"D:\qemu\qemu-system-x86_64.exe" -cdrom os.iso

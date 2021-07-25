@@ -1,11 +1,15 @@
 SRCS := $(wildcard *.c)
 OBJS := $(patsubst %.c, %.o, $(SRCS))
-TARGET := temp
+CFLAGS := -Wall -Wextra -pipe
+KERNEL := markOS.elf
 
-all: $(TARGET)
+.PHONY: all clean
 
-$(TARGET): $(OBJS)
+
+all: $(KERNEL)
+
+$(KERNEL): $(OBJS)
 	gcc -c $(OBJS) -o $@
 
 clean:
-	rm -rf $(TARGET) *.o
+	rm -rf $(KERNEL) $(OBJS)

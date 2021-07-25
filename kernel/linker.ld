@@ -1,7 +1,11 @@
-ENTRY(start)
+ENTRY(kmain)
 
 SECTIONS {
     . = 1M;
+
+    .stivale2hdr ALIGN(4K) : {
+        KEEP(*(.stivale2hdr))
+    }
 
     .boot : ALIGN(4K)
     {

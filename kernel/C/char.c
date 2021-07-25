@@ -2,6 +2,8 @@
 #include "lib/malloc.h"
 #include "lib/terminal.h"
 
+void (*stivale2_print)(const char *buf, size_t size) = null;
+
 uint8_t get_ascii_char(uint8_t key_code, bool caps)
 {
     uint8_t output;
@@ -154,4 +156,10 @@ uint8_t get_ascii_char(uint8_t key_code, bool caps)
     }
 
     return output;
+}
+
+void putC(uint8_t ch){
+	if (stivale2_print != null)
+        stivale2_print(&ch, 1);
+    asm volatile ("outb %0, %1" :: "a" (ch), "Nd" (0xe9) : "memory");
 }

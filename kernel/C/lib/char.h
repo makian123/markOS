@@ -6,5 +6,6 @@
 
 
 extern uint8_t get_ascii_char(uint8_t c, bool caps);
+void putC(uint8_t ch);
 
 #endif

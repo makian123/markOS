@@ -9,7 +9,9 @@
         "str.h": "c",
         "string.h": "c",
         "malloc.h": "c",
-        "gamerpg.h": "c"
+        "gamerpg.h": "c",
+        "system.h": "c",
+        "stivale2.h": "c"
     },
     "files.exclude": {
         "**/*.o*": true

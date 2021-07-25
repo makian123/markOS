@@ -1,31 +1,28 @@
-ENTRY(start)
+/* Tell the linker that we want the symbol _start to be our entry point */
+ENTRY(_start)
+ 
+SECTIONS
+{
+    . = 0xffffffff80200000;
 
-SECTIONS {
-    . = 1M;
-
-    .boot : ALIGN(4K)
-    {
-        *(.multiboot_header)
+    .stivale2hdr ALIGN(4K) : {
+        KEEP(*(.stivale2hdr))
     }
 
-    .text : ALIGN(4K)
-    {
-        *(.text)
+    .text ALIGN(4K) : {
+        *(.text*)
     }
-
-    .rodata : ALIGN(4K)
-    {
-        *(.rodata)
+ 
+    .rodata ALIGN(4K) : {
+        *(.rodata*)
     }
-
-    .data BLOCK(4K) : ALIGN(4K)
-    {
-        *(.data)
+ 
+    .data ALIGN(4K) : {
+        *(.data*)
     }
-
-    .bss BLOCK(4K) : ALIGN(4K)
-    {
-        *(.COMMON)
-        *(.bss)
+ 
+    .bss ALIGN(4K) : {
+        *(COMMON)
+        *(.bss*)
     }
 }
