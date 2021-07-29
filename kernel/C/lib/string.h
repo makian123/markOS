@@ -15,6 +15,6 @@ void StrReverse(uint8_t *str);
 uint8_t * strpbrk(const uint8_t *str, const uint8_t *ct);
 uint8_t * strsep(uint8_t **str, const uint8_t *ch);
 
-uint8_t * itoa(sint64_t num, uint32_t base);
+uint8_t * itoa(long num, uint32_t base);
 
 #endif

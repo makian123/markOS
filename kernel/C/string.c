@@ -56,7 +56,7 @@ void StrReverse(uint8_t *str){
     temp = null;
 }
 
-uint8_t * itoa(sint64_t num, uint32_t base){
+uint8_t * itoa(long num, uint32_t base){
     if(num == 0) return "0\0";
 
     uint8_t *output = '\0';

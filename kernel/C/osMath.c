@@ -16,12 +16,12 @@ double sqrt(double input){
     if(input <= 0) return 0;
     if(input == -0) return -0;
 
-    sint32_t start = 0;
-    sint32_t end = input / 2;
-    sint32_t mid = ((start + end) / 2) <= 1 ? 1 : (start + end) / 2;
+    int start = 0;
+    int end = input / 2;
+    int mid = ((start + end) / 2) <= 1 ? 1 : (start + end) / 2;
 
     while(start < end && mid){
-        sint32_t minVal = input / mid;
+        int minVal = input / mid;
         if(minVal == mid) return mid;
         if(minVal < mid){
             end = mid - 1;
@@ -36,6 +36,21 @@ double sqrt(double input){
     return mid;
 }
 
+int floor(float input){
+    return (int)input;
+}
+
+int ceil(float input){
+    if(input < 0){
+        return (int)input + 1;
+    }
+    return (int)input;
+}
+
+int round(float input){
+    if(input - (int)input >= 0.5) return ceil(input);
+    else return floor(input);
+}
 uint32_t rand(){
     next = next * 1103515245 + 12345;
     return (unsigned)(next/65536) % 32768;

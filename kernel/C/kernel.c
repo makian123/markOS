@@ -8,11 +8,13 @@
 #include "lib/malloc.h"
 #include "lib/system.h"
 #include "lib/osMath.h"
+#include "lib/lists.h"
+#include "lib/terminal.h"
 
 extern void __stack_chk_fail(void){
 }
-void (*stivale2_print)(const char *buf, size_t size) = null;
 
+void (*stivale2_print)(const char *buf, size_t size) = null;
 static uint8_t stack[4096];
 
 static struct stivale2_header_tag_terminal terminal_hdr_tag = {
@@ -23,7 +25,6 @@ static struct stivale2_header_tag_terminal terminal_hdr_tag = {
     },
     .flags = 0
 };
-
 static struct stivale2_header_tag_framebuffer framebuffer_hdr_tag = {
     
     .tag = {
@@ -35,7 +36,6 @@ static struct stivale2_header_tag_framebuffer framebuffer_hdr_tag = {
     .framebuffer_height = 0,
     .framebuffer_bpp    = 0
 };
-
 __attribute__((section(".stivale2hdr"), used))
 static struct stivale2_header stivale_hdr = {
     .entry_point = 0,
@@ -85,7 +85,9 @@ void printF(const uint8_t *str){
     }
 }
 
+//kernel entry
 void kmain(struct stivale2_struct *info) {
+    TermInit();
     struct stivale2_tag *tag = (struct stivale2_tag*) info->tags;
     while(tag != null){
         if(tag->identifier == STIVALE2_STRUCT_TAG_TERMINAL_ID){
@@ -95,13 +97,35 @@ void kmain(struct stivale2_struct *info) {
         tag = (void*)tag->next;
     }
 
-    printC('a');
-    uint8_t inChar;
+    printS("Welcome to markOS\0");
     
+    uint8_t inChar;
     for (;;) {
         inChar = getInput();
         if(inChar != 0){
-            printC(get_ascii_char(inChar, false));
+            switch (inChar)
+            {
+            case KEY_ENTER:
+                printS(GetCommand());
+                CommandExecute();
+                printC('\n');
+                break;
+
+            case KEY_BACKSPACE:
+                printS("\b \b");
+                CommandPopBack();
+                break;
+
+            case KEY_BACKSLASH:
+                printC('\\');
+                break;
+
+            default:
+                printC(get_ascii_char(inChar, false));
+                CommandAdd(get_ascii_char(inChar, false));
+                break;
+            }
+            
             inChar = 0;
             sleep(1);
         }

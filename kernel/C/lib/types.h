@@ -8,11 +8,6 @@ typedef unsigned long long uint64_t;
 typedef uint64_t size_t;
 typedef unsigned long uintptr_t;
 
-typedef char sint8_t;
-typedef short sint16_t;
-typedef int sint32_t;
-typedef long long sint64_t;
-
 //typedef uint32_t size_t;
 typedef enum{
     false = (1 == 0),

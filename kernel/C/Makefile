@@ -9,7 +9,7 @@ KERNEL := markOS.elf
 all: $(KERNEL)
 
 $(KERNEL): $(OBJS)
-	gcc -c $(OBJS) -o $@
+	gcc -Wbuiltin-declaration-mismatch -c $(OBJS) -o $@
 
 clean:
 	rm -rf $(KERNEL) $(OBJS)
