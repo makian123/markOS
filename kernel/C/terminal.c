@@ -15,11 +15,7 @@ void TermInit(){
     StrClear(command);
 }
 
-void CommandExecute(){
-    if(StrCmp(command, "clear\0")){
-
-    }
-
+void CommandClear(){
     StrClear(command);
 }
 

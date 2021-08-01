@@ -1,4 +1,5 @@
 #include "lib/string.h"
+#include "lib/osMath.h"
 
 size_t StrLen(const uint8_t *str){
     size_t len = 0;
@@ -46,14 +47,24 @@ void StrPopBack(uint8_t *str){
 }
 
 void StrReverse(uint8_t *str){
-    uint8_t temp = '\0';
-    size_t len = StrLen(str);
-    for(size_t i = 0; i <= (size_t)(len / 2); ++i){
+    size_t i = 0, j = StrLen(str) - 1;
+    uint8_t temp;
+    while(i < j){
         temp = str[i];
-        str[i] = str[len - (1 + i)];
-        str[len - (1 + i)] = temp;
+        str[i] = str[j];
+        str[j] = temp;
+        i++;
+        j--;
     }
-    temp = null;
+}
+
+void StrInsert(uint8_t *str, size_t pos, uint8_t ch){
+    if(pos > StrLen(str)) return;
+    StringAdd(str, '0');
+    for(size_t i = StrLen(str) - 1; i > pos; i--){
+        str[i] = str[i - 1];
+    }
+    str[pos] = ch;
 }
 
 uint8_t * itoa(long num, uint32_t base){
@@ -75,6 +86,13 @@ uint8_t * itoa(long num, uint32_t base){
     if(isNegative) StringAdd(output, '-');
 
     StrReverse(output);
+    return output;
+}
+
+uint8_t * ftoa(double num, uint32_t precision){
+    if(num == (double)0) return "0\0";
+    uint8_t *output = itoa((long)(num * pow(10, precision)), 10);
+    StrInsert(output, (size_t)(StrLen(output) - precision), '.');
     return output;
 }
 

@@ -14,7 +14,8 @@ void StrPopBack(uint8_t *str);
 void StrReverse(uint8_t *str);
 uint8_t * strpbrk(const uint8_t *str, const uint8_t *ct);
 uint8_t * strsep(uint8_t **str, const uint8_t *ch);
+void StrInsert(uint8_t *str, size_t pos, uint8_t ch);
 
 uint8_t * itoa(long num, uint32_t base);
-
+uint8_t * ftoa(double num, uint32_t precision);
 #endif

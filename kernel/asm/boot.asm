@@ -24,7 +24,9 @@ start:
 
     call set_up_page_tables
     call enable_paging
-    
+    call mode13h
+    call getMode
+
     lgdt [gdt64.pointer]
     jmp gdt64.code:kernel_init
 
@@ -140,3 +142,14 @@ gdt64:
 .pointer:
     dw $ - gdt64 - 1
     dq gdt64
+
+mode13h:
+	mov ah, 0
+	mov al, 0x13
+	int 0x10
+	ret
+
+getMode:
+	mov ah, 0xf
+	int 0x10
+	ret

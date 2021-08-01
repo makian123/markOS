@@ -7,6 +7,6 @@ void CommandAdd(uint8_t ch);
 void CommandPopBack();
 void TermInit();
 
-void CommandExecute();
+void CommandClear();
 uint8_t *GetCommand();
 #endif

@@ -82,6 +82,7 @@
 #define KEY_SPACE 0x39
 #define KEY_TAB 0x0F
 #define KEY_UP 0x48
-
+#define KEY_CAPS 0x3A
+#define KEY_LSHIFT_PRESSED 0x2A
 
 #endif
