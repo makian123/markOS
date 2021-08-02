@@ -89,13 +89,6 @@ uint8_t * itoa(long num, uint32_t base){
     return output;
 }
 
-uint8_t * ftoa(double num, uint32_t precision){
-    if(num == (double)0) return "0\0";
-    uint8_t *output = itoa((long)(num * pow(10, precision)), 10);
-    StrInsert(output, (size_t)(StrLen(output) - precision), '.');
-    return output;
-}
-
 uint8_t * strpbrk(const uint8_t *str, const uint8_t *ct){
     const uint8_t *sc1, *sc2;
     for(sc1 = str; *sc1 != '\0'; ++sc1){

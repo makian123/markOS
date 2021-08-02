@@ -11,6 +11,8 @@
 #include "lib/lists.h"
 #include "lib/terminal.h"
 #include "lib/lists.h"
+#include "lib/IDT.h"
+#include "lib/GDT.h"
 #include <stdarg.h>
 
 #pragma region commands
@@ -101,6 +103,7 @@ void *stivale2_get_tag(struct stivale2_struct *stivale2_struct, uint64_t id) {
 }
 
 //text printing
+/*
 void printC(const uint8_t c){
     if (stivale2_print != null)
         stivale2_print(&c, 1);
@@ -126,7 +129,7 @@ int printF(const uint8_t *format, ...){
             continue;
         }
         format++;
-        if(format == '\0'){
+        if(*format == '\0'){
             break;
         }
         switch(*format){
@@ -149,8 +152,6 @@ int printF(const uint8_t *format, ...){
                 printS("0x\0");
                 printS(itoa(va_arg(arg, uint32_t), 16));
                 break;
-            case 'f':
-                printS(ftoa(va_arg(arg, float), 2));
             case '%':
                 printC('%');
                 break;
@@ -170,15 +171,15 @@ void printList(struct List *head){
     printC(']');
     printC('\n');
 }
-
+*/
 void RunCommand(const uint8_t *command);
+
 void SetColor(const uint8_t *fg, const uint8_t *bg){
     printS(fg);
     printS(bg);
 }
 //kernel entry
 void kmain(struct stivale2_struct *info) {
-    TermInit();
     struct stivale2_tag *tag = (struct stivale2_tag*) info->tags;
     while(tag != null){
         if(tag->identifier == STIVALE2_STRUCT_TAG_TERMINAL_ID){
@@ -187,11 +188,17 @@ void kmain(struct stivale2_struct *info) {
         }
         tag = (void*)tag->next;
     }
-    
+    TermInit(stivale2_print);
+    GDTInit();
+    IDTInit();
+    2/0;
+    SetColor(fRed, bBlack);
+    printS("\nWelcome to markOS\n\0");
+    SetColor(fWhite, bBlack);
     //InputSystem
     bool caps = false;
     uint8_t inChar;
-
+    
     for (;;) {
         inChar = getInput();
         if(inChar != 0){

@@ -1,4 +1,4 @@
-all: boot crti crtn lmi mbh shutdown
+all: boot crti crtn lmi mbh shutdown idt
 
 boot: boot.asm
 	nasm -f elf64 boot.asm -o boot.o
@@ -18,3 +18,5 @@ mbh: multiboot_header.asm
 shutdown: shutdown.asm
 	nasm -f elf64 shutdown.asm -o shutdown.o
 
+idt: idt.asm
+	nasm -f elf64 idt.asm -o idt.o

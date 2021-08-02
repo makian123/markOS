@@ -12,7 +12,8 @@
         "gamerpg.h": "c",
         "system.h": "c",
         "stivale2.h": "c",
-        "osmath.h": "c"
+        "osmath.h": "c",
+        "idt.h": "c"
     },
     "files.exclude": {
         "**/*.o*": true
