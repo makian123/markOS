@@ -17,4 +17,5 @@ uint8_t * strsep(uint8_t **str, const uint8_t *ch);
 void StrInsert(uint8_t *str, size_t pos, uint8_t ch);
 
 uint8_t * itoa(long num, uint32_t base);
+int atoi(uint8_t *str);
 #endif

@@ -1,5 +1,4 @@
 #include "lib/system.h"
-#include "lib/keyboard.h"
 
 uint32_t ticks = 0;
 

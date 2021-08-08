@@ -3,34 +3,37 @@
 
 #include "types.h"
 
-struct GDTDescriptor {
-    uint16_t Size;
-    uint64_t Offset;
+struct GDTEntry
+{
+   uint16_t limit_low;           // The lower 16 bits of the limit.
+   uint16_t base_low;            // The lower 16 bits of the base.
+   uint8_t  base_middle;         // The next 8 bits of the base.
+   uint8_t  access;              // Access flags, determine what ring this segment can be used in.
+   uint8_t  granularity;
+   uint8_t  base_high;           // The last 8 bits of the base.
 } __attribute__((packed));
 
-struct GDTEntry {
-    uint16_t Limit0;
-    uint16_t Base0;
-    uint8_t Base1;
-    uint8_t AccessByte;
-    uint8_t Limit1_Flags;
-    uint8_t Base2;
-}__attribute__((packed));
+struct GDTR
+{
+   uint16_t limit;               // The upper 16 bits of all selector limits.
+   uint64_t base;                // The address of the first gdt_entry_t struct.
+}
+ __attribute__((packed));
 
-struct GDT {
-    struct GDTEntry Null;
-    struct GDTEntry KernelCode;
-    struct GDTEntry KernelData;
-    struct GDTEntry UserNull;
-    struct GDTEntry UserCode;
-    struct GDTEntry UserData;
-    struct GDTEntry Reserved;
-} __attribute__((packed)) 
+struct GDT{
+    struct GDTEntry Null; //0x00
+    struct GDTEntry KC; //0x08
+    struct GDTEntry KD; //0x10
+    struct GDTEntry UN;
+    struct GDTEntry UC;
+    struct GDTEntry UD;
+}__attribute__((packed))
+__attribute__((alligned(0x1000)));
 
-__attribute((aligned(0x1000)));
+struct GDT DefaultGDT;
 
-extern struct GDT DefaultGDT;
-extern void LoadGDT(struct GDTDescriptor *gdtDescriptor);
-bool GDTInit();
+extern void LoadGDT(struct GDTR *gdtr);
+
+void GDTInit();
 
 #endif

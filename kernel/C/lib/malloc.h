@@ -16,5 +16,7 @@ void Split(struct block *fSlot, size_t size);
 void *Malloc(size_t size);
 void merge();
 void Free(void *ptr);
+void memcpy(void *dest, void *src, size_t n);
+void *memset(void *dest, int val, size_t n);
 
 #endif

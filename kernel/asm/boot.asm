@@ -2,7 +2,7 @@ global start
 extern kernel_init
 
 section .text
-bits 32
+[bits] 32
 
 ;mov eax, cr0
 ;and al, -2

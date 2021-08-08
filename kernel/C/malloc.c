@@ -71,3 +71,23 @@ void Free(void *ptr){
         curr->free = 1;
     }
 }
+
+void memcpy(void *dest, void *src, size_t n){
+    uint8_t *src_char = (uint8_t*)src;
+    uint8_t *dest_char = (uint8_t*)dest;
+    
+    for(size_t i = 0; i < n; i++){
+        dest_char[i] = src_char[i];
+    }
+}
+
+void *memset(void *dest, int val, size_t n){
+    int i = 0;
+
+    while(dest && n > 0){
+        dest = val;
+        dest++;
+        n--;
+    }
+    return (dest);
+}
