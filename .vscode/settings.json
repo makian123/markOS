@@ -20,7 +20,8 @@
         "vesa.h": "c",
         "xutility": "c",
         "main.h": "c",
-        "lists.h": "c"
+        "lists.h": "c",
+        "framebuffer.h": "c"
     },
     "files.exclude": {
         "**/*.o*": true

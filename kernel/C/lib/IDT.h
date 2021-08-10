@@ -3,27 +3,23 @@
 
 #include "types.h"
 
-#define INTERRUPT_GATE 0x8E
-#define TRAP_GATE 0xF
+struct IDTDescriptorStruct{
+    uint16_t BaseLow;   //Offset bits 0-15
+    uint16_t Selector;  //Code segment selector in GDT
+    uint8_t IST;    //Offset of IST
+    uint8_t Attr;   //Type and attributes
+    uint16_t BaseMiddle;   //Offset bits 16-31
+    uint32_t BaseHigh;   //Offset bits 32-63
+    uint32_t Zero;  //Reserved
+}__attribute__((packed));
+typedef struct IDTDescriptorStruct idt_t;
 
-struct idt_64_entry
-{
-    uint16_t offset_1;
-    uint16_t selector;
-    uint8_t ist;
-    uint8_t type_attr;
-    uint32_t offset_2;
-    uint32_t offset_3;
-    uint32_t zero;
-} __attribute__((packed));
-
-struct idt_64_ptr
-{
+struct IDTPointerStruct{
     uint16_t size;
     uint64_t offset;
-} __attribute__((packed));
+}__attribute__((packed));
+typedef struct IDTPointerStruct idtr_t;
 
-void idt_init();
-void idt_flush();
-
+bool idtInit();
+void idtSet(uint8_t num, uint64_t base, uint16_t sel, uint8_t flags);
 #endif

@@ -12,6 +12,7 @@
 #include "lib/framebuffer.h"
 #include "lib/gdt.h"
 #include "lib/idt.h"
+#include "lib/irq.h"
 
 extern void __stack_chk_fail(void){
 }
@@ -85,10 +86,22 @@ void kmain(struct stivale2_struct *info) {
     uint8_t *fb_addr = stivale2_get_tag(info, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
     Framebuffer self = FBInit(colorscheme, info);
     FBClear();
-    if(good) glog(SUCCESS, "Successfully loaded GDT\n");
+    cli();
+    if(good) glog(SUCCESS, "Successfully loaded GDT");
     else{
-        glog(FAILURE, "GDT wasn't loaded\n");
+        glog(FAILURE, "GDT wasn't loaded");
         hang();
     }
+    if(idtInit()) glog(SUCCESS, "Successfully loaded IDT");
+    else{
+        glog(FAILURE, "IDT wasn't loaded");
+        hang();
+    }
+    if(initIrq()) glog(SUCCESS, "Successfully loaded IRQ");
+    else{
+        glog(FAILURE, "IRQ wasn't loaded");
+        hang();
+    }
+    sti();
     main(info, &self);
 }
