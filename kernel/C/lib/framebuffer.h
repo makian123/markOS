@@ -15,15 +15,6 @@ typedef struct{
 Color rgb(int r, int g, int b);
 
 typedef struct{
-    size_t x, y;
-}Point;
-
-typedef struct{
-    Point startingPoint;
-    size_t w, h;
-}Rect;
-
-typedef struct{
     Color colorScheme[8];
     Color background;
     Color foreground;
@@ -34,11 +25,6 @@ typedef struct{
     PSF font;
 }Framebuffer;
 
-typedef struct{
-    Color bg;
-    Rect windowRect;
-}Window;
-
 Framebuffer FBInit(Color colorScheme[8], struct stivale2_struct *info);
 void FBClear();
 void PrintC(char c, int position_x, int position_y, Framebuffer *self);
@@ -47,7 +33,6 @@ void PrintF(uint8_t *format, ...);
 void FBClear();
 void glog(int level, uint8_t *format, ...);
 
-void FillRect(Color col, Point startPos, int w, int h);
 void DrawScreen();
 
 enum glog_level

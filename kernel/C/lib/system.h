@@ -10,8 +10,6 @@ void outb(uint16_t port, uint8_t data);
 uint8_t getInput();
 uint8_t getInputNoLoop();
 void waitForIO(uint32_t timerCount);
-void sleep(uint32_t sec);
-void sleepms(uint32_t ms);
 
 static inline void sti(){
     asm volatile("sti");

@@ -1,16 +1,17 @@
-[bits 64]
+[bits 32]
+global gdtFlush
+extern gp
 
-global LoadGDT
-LoadGDT:
-    lgdt [rdi]
+gdtFlush:
+    lgdt [gp]
     mov ax, 0x10
-    mov ds, ax
+    mov ds, ax ; should throw an error or crash
     mov es, ax
     mov fs, ax
     mov gs, ax
     mov ss, ax
-    pop rdi
-    mov rax, 0x08
-    push rax
-    push rdi
-    retfq
+    jmp 0x08:flush2
+    ret
+
+flush2:
+    ret

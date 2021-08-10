@@ -13,7 +13,14 @@
         "system.h": "c",
         "stivale2.h": "c",
         "osmath.h": "c",
-        "idt.h": "c"
+        "idt.h": "c",
+        "isr.h": "c",
+        "gdt.h": "c",
+        "kb.h": "c",
+        "vesa.h": "c",
+        "xutility": "c",
+        "main.h": "c",
+        "lists.h": "c"
     },
     "files.exclude": {
         "**/*.o*": true

@@ -29,4 +29,6 @@ typedef enum{
 #define null 0
 #define NULL ((void*)0))
 
+typedef void* sasp_t;
+
 #endif

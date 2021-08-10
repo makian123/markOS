@@ -1,0 +1,1 @@
+"D:\qemu\qemu-system-x86_64.exe" -cpu max -smp 8 -monitor stdio -cdrom image.iso

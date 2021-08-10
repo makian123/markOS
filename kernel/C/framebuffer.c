@@ -3,6 +3,7 @@
 #include "lib/kernel.h"
 #include "lib/string.h"
 #include "lib/font.h"
+#include "lib/lists.h"
 
 extern PSF fb_font;
 
@@ -133,7 +134,11 @@ void PrintF(uint8_t *format, ...){
         switch(*format){
             case 'd':
             case 'i':
+            case 'l':
                 PrintS(itoa(va_arg(arg, long), 10));
+                break;
+            case 'x':
+                PrintS(itoa(va_arg(arg, long), 16));
                 break;
             case 'c':
                 PrintC(va_arg(arg, int), currentFB.cursorX, currentFB.cursorY, &currentFB);
@@ -182,18 +187,6 @@ void glog(int level, uint8_t *format, ...){
     PrintS("\n");
 }
 
-void FillRect(Color col, Point startPos, int w, int h){
-    for(size_t i = startPos.x; i < startPos.x + w; ++i){
-        for(size_t j = startPos.y; j < startPos.y + h; ++j){
-            FBDrawPixel(i, j, GetColor(&col), &currentFB);
-        }
-    }
-}
-
-void DrawScreen(){
-    FBClear();
-    
-}
 
 Framebuffer FBInit(Color cs[8], struct stivale2_struct *info){
     Framebuffer new;

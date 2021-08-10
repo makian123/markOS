@@ -5,23 +5,23 @@ SECTIONS
 {
     . = 0xffffffff80200000;
 
-    .stivale2hdr ALIGN(4K) : {
+    .stivale2hdr  : {
         KEEP(*(.stivale2hdr))
     }
 
-    .text ALIGN(4K) : {
+    .text : {
         *(.text*)
     }
  
-    .rodata ALIGN(4K) : {
+    .rodata : {
         *(.rodata*)
     }
  
-    .data ALIGN(4K) : {
+    .data : {
         *(.data*)
     }
  
-    .bss ALIGN(4K) : {
+    .bss : {
         *(COMMON)
         *(.bss*)
     }
