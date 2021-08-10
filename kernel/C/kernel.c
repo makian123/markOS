@@ -90,6 +90,5 @@ void kmain(struct stivale2_struct *info) {
         glog(FAILURE, "GDT wasn't loaded\n");
         hang();
     }
-    sti();
     main(info, &self);
 }

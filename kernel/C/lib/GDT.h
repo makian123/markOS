@@ -4,12 +4,13 @@
 #include "types.h"
 #include "cpu.h"
 
-struct GDTDescriptor{
+struct GDTDescriptorStruct{
     uint16_t size;
     uint64_t offset;
 } __attribute__((packed));
+typedef struct GDTDescriptorStruct gdt_ptr_t;
 
-struct GDTEntry{
+struct GDTEntryStruct{
     uint16_t baseLow;
     uint16_t LimitLow;
     uint8_t baseMiddle;
@@ -17,6 +18,7 @@ struct GDTEntry{
     uint8_t Granularity;
     uint8_t baseHigh;
 } __attribute__((packed));
+typedef struct GDTEntryStruct gdt_entry_t;
 
 bool GDTInit();
 

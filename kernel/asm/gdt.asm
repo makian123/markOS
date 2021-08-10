@@ -1,4 +1,4 @@
-[bits 32]
+[bits 64]
 global gdtFlush
 extern gp
 
@@ -10,8 +10,9 @@ gdtFlush:
     mov fs, ax
     mov gs, ax
     mov ss, ax
-    jmp 0x08:flush2
-    ret
+    push 0x08
+    push flush2
+    retq
 
 flush2:
     ret

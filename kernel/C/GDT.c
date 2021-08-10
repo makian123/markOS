@@ -1,7 +1,7 @@
 #include "lib/gdt.h"
 
-struct GDTEntry gdt[5];
-struct GDTDescriptor gp;
+gdt_entry_t gdt[5];
+gdt_ptr_t gp;
 
 extern void gdtFlush();
 
@@ -21,7 +21,7 @@ void GDTSetGate(int num, uint64_t base, uint64_t limit, uint8_t access, uint8_t 
 
 bool GDTInit(){
     //Set the gdt pointer values
-    gp.size = (sizeof(struct GDTEntry) * 3) - 1;
+    gp.size = (sizeof(gdt_entry_t) * 6) - 1;
     gp.offset = &gdt;
 
     GDTSetGate(0, 0, 0, 0, 0);   //Set null segment
