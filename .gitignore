@@ -1,4 +1,3 @@
-### VisualStudioCode ###
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -6,10 +5,8 @@
 !.vscode/extensions.json
 *.code-workspace
 
-# Local History for Visual Studio Code
 .history/
+limine/
 
-### VisualStudioCode Patch ###
-# Ignore all local history of files
 .history
 .ionide
