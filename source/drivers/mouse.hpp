@@ -2,8 +2,8 @@
 
 #include <include/types.hpp>
 #include <drivers/framebuffer.hpp>
-#include <game/game.hpp>
+#include <include/graphics.hpp>
 
-static Vertex2D mousePos = { 0, 0 };
+static Point2 mousePos = { 100, 100 };
 
 void mouseInit(Framebuffer in);

@@ -1,17 +1,30 @@
-#include <include/bitmap.hpp>
+#include "bitmap.hpp"
 
-bool isBitmapSet(Bitmap *bmp, size_t len){
-    return (bmp->buffer[len / 8] & 1 << (len % 8)) != 0;
+bool Bitmap::operator[](uint64_t index){
+    return Get(index);
 }
 
-void setBitmap(Bitmap *bmp, size_t len){
-    bmp->buffer[len / 8] |= 1 << (len % 8);
+bool Bitmap::Get(uint64_t index){
+    if(index > Size * 8) return false;
+
+    uint64_t byteIndex = index / 8;
+    uint8_t bitIndex = index % 8;
+    uint8_t bitIndexer = 0b10000000 >> bitIndex;
+
+    if((Buffer[byteIndex] & bitIndexer) > 0) return true;
+
+    return false;
 }
 
-void unsetBitmap(Bitmap *bmp, size_t len){
-    bmp->buffer[len / 8] &= ~(1 << (len % 8));
-}
+bool Bitmap::Set(uint64_t index, bool value){
+    if(index > Size * 8) return false;
 
-void flipBitmap(Bitmap *bmp, size_t len){
-    bmp->buffer[len / 8] ^= 1 << (len % 8);
-} 
+    uint64_t byteIndex = index / 8;
+    uint8_t bitIndex = index % 8;
+    uint8_t bitIndexer = 0b10000000 >> bitIndex;
+
+    Buffer[byteIndex] &= ~bitIndexer;
+    if(value) Buffer[byteIndex] |= bitIndexer;
+
+    return true;
+}

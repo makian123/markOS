@@ -24,7 +24,7 @@ uint8_t *itoa(long num, uint8_t *buffer, int base = 10){
 
     int i = 0;
 
-    while(n){
+    while(n > 0){
         int reminder = n % base;
 
         if(reminder >= 10){
@@ -43,6 +43,34 @@ uint8_t *itoa(long num, uint8_t *buffer, int base = 10){
 
     if(num < 0 && base == 10){
         buffer[i++] = '-';
+    }
+    buffer[i] = '\0';
+
+    return reverse(buffer, 0, i - 1);
+}
+
+uint8_t *itoa(uint64_t num, uint8_t *buffer, int base){
+    if(base < 2 || base > 32){
+        return buffer;
+    }
+
+    int i = 0;
+
+    while(num > 0){
+        int reminder = num % base;
+
+        if(reminder >= 10){
+            buffer[i++] = 65 + (reminder - 10);
+        }
+        else{
+            buffer[i++] = 48 + reminder;
+        }
+
+        num /= base;
+    }
+
+    if(i == 0){
+        buffer[i++] = '0';
     }
     buffer[i] = '\0';
 

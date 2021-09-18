@@ -1,6 +1,5 @@
 KERNEL := kernel.bin
 SOURCEDIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-BACKGROUND := $(SOURCEDIR)/bg.bmp
 
 CC = gcc
 CPP = g++
@@ -27,9 +26,9 @@ INTERNALCFLAGS  :=            \
 	-mno-80387            \
 	-mno-mmx              \
 	-mno-3dnow            \
-	-mno-sse              \
-	-mno-sse2             \
-	-mno-red-zone
+	-mno-red-zone		  \
+	-mno-sse             \
+	-mno-sse2            
 
 INTERNALCPPFLAGS  :=          \
 	-I$(SOURCEDIR)        \
@@ -40,9 +39,9 @@ INTERNALCPPFLAGS  :=          \
 	-mno-80387            \
 	-mno-mmx              \
 	-mno-3dnow            \
-	-mno-sse              \
-	-mno-sse2             \
-	-mno-red-zone
+	-mno-red-zone		  \
+	-mno-sse             \
+	-mno-sse2            
 
 ASMFILES = $(shell find $(SOURCEDIR)/ -type f -name '*.asm')
 CPPFILES = $(shell find $(SOURCEDIR)/ -type f -name '*.cpp')
@@ -72,7 +71,7 @@ $(KERNEL): $(OBJ)
 	@$(AS) $(ASMFLAGS) $^ -f elf64 -o $@
 
 iso:
-	@cp $(KERNEL) $(BACKGROUND) $(SOURCEDIR)/../limine.cfg $(SOURCEDIR)/../limine/limine.sys \
+	@cp $(KERNEL) $(SOURCEDIR)/../limine.cfg $(SOURCEDIR)/../limine/limine.sys \
 		$(SOURCEDIR)/../limine/limine-cd.bin $(SOURCEDIR)/../limine/limine-eltorito-efi.bin $(SOURCEDIR)/../iso_root/
 
 	@xorriso -as mkisofs -b limine-cd.bin \

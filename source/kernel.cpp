@@ -12,6 +12,7 @@
 #include <drivers/mouse.hpp>
 #include <game/game.hpp>
 #include <drivers/ata.hpp>
+#include <boot/bootVars.hpp>
 
 static uint8_t stack[4096];
 
@@ -61,14 +62,14 @@ void* stivale2_get_tag(stivale2_struct *stivale, uint64_t id)
 	}
 }
 
+extern "C" void InitSSE();
+
 extern "C" void _start(stivale2_struct *info)
 {
-    BITMAP logo;
-    logo.header[18] = 30;
-    logo.header[22] = 30;
+    boot_info_t bootVars;
 
     Color scheme[8] = {
-        scheme[0] = RGB(0, 0, 0),
+        scheme[0] = RGB(25, 25, 25),
         scheme[1] = RGB(220, 50, 47),
         scheme[2] = RGB(133, 153, 0),
         scheme[3] = RGB(181, 137, 0),
@@ -80,10 +81,26 @@ extern "C" void _start(stivale2_struct *info)
 
     initGDT();
 
-    uint8_t *fb_addr = (uint8_t*)stivale2_get_tag(info, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
-    monitor = (stivale2_struct_tag_framebuffer*)stivale2_get_tag(info, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
+    stivale2_struct_tag_framebuffer *monitor = (stivale2_struct_tag_framebuffer*)stivale2_get_tag(info, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
     stivale2_struct_tag_smp *smp = (stivale2_struct_tag_smp*)stivale2_get_tag(info, STIVALE2_STRUCT_TAG_SMP_ID);
     stivale2_struct_tag_memmap *memoryMap = (stivale2_struct_tag_memmap*)stivale2_get_tag(info, STIVALE2_STRUCT_TAG_MEMMAP_ID);
+
+    if(smp != NULL){
+        bootVars.cpu.processor_count = smp->cpu_count;
+        bootVars.cpu.bootstrap_processor_lapic_id = smp->bsp_lapic_id;
+        bootVars.cpu.acpi_processor_uid = smp->smp_info->processor_id;
+        bootVars.cpu.lapic_id = smp->smp_info->lapic_id;
+    }
+    if(memoryMap != NULL){
+        bootVars.mmap.entries = memoryMap->entries;
+        bootVars.mmap.length = memoryMap->memmap->length;
+        bootVars.mmap.type = memoryMap->memmap->type;
+
+        for(int i = 0; i < memoryMap->entries; ++i){
+            bootVars.mmap.memmap[i] = memoryMap->memmap[i];
+            stivale2_mmap_entry *internal = &memoryMap->memmap[i];
+        }
+    }
 
     Framebuffer backBuffer;
     backBuffer.Initialize(scheme, monitor, 16);
@@ -91,12 +108,11 @@ extern "C" void _start(stivale2_struct *info)
     backBuffer.Clear();
 
     initIDT();
+
     initPIT(100);
     initKeyboard(backBuffer);
     mouseInit(backBuffer);
 
-    backBuffer.Log(SUCCESS, "Welcome to markOS");
     //initATA();
-    main(info);
-    for (;;);
+    main(info, &backBuffer);
 }
