@@ -1,1 +1,1 @@
-"D:\qemu\qemu-system-x86_64.exe" -cpu max -smp 4 -d int -M smm=off -monitor stdio -cdrom image.iso
+"D:\qemu\qemu-system-x86_64.exe" -m 256M -cpu qemu64 -d int -M smm=off -no-reboot -no-shutdown -monitor stdio -cdrom image.iso

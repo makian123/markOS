@@ -1,72 +1,56 @@
 #include <stivale2.h>
 #include <include/types.hpp>
 #include <main.hpp>
+
 #include <drivers/keyboard.hpp>
+#include <drivers/mouse.hpp>
 #include <drivers/pit.hpp>
 #include <system/gdt/gdt.hpp>
 #include <system/idt/idt.hpp>
 #include <include/io.hpp>
-#include <stivale2.h>
+
 #include <kernel.hpp>
 #include <drivers/framebuffer.hpp>
-#include <drivers/mouse.hpp>
-#include <game/game.hpp>
-#include <drivers/ata.hpp>
 #include <boot/bootVars.hpp>
 
-static uint8_t stack[4096];
+#include <mm/mem.hpp>
+#include <mm/pageFrameAllocator.hpp>
+#include <mm/pageTableManager.hpp>
+#include <mm/heap.hpp>
 
-static struct stivale2_header_tag_terminal terminal_hdr_tag = {
-    .tag = {
-        .identifier = STIVALE2_HEADER_TAG_TERMINAL_ID,
-        .next = 0
-    },
-    .flags = 0
+struct node{
+    int val;
+    node *next;
+    node *prev;
 };
-static struct stivale2_header_tag_smp smp_hdr_tag = {
-    .tag = {
-        .identifier = STIVALE2_HEADER_TAG_SMP_ID,
-        .next = (uint64_t)&terminal_hdr_tag
-    },
-    .flags = 0
-};
-static struct stivale2_header_tag_framebuffer framebuffer_hdr_tag = {
-    .tag = {
-        .identifier = STIVALE2_HEADER_TAG_FRAMEBUFFER_ID,
-        .next = (uint64_t)&smp_hdr_tag
-    },
-    .framebuffer_width  = 0,
-    .framebuffer_height = 0,
-    .framebuffer_bpp    = 0
-};
-__attribute__((section(".stivale2hdr"), used))
-    static struct stivale2_header stivale_hdr = {
-        .entry_point = 0,
-        .stack = (uintptr_t)stack + sizeof(stack),
-        .flags = (1 << 1),
-        .tags = (uintptr_t)&framebuffer_hdr_tag
-};
-void* stivale2_get_tag(stivale2_struct *stivale, uint64_t id)
+
+extern "C" uint64_t _KernelStart;
+extern "C" uint64_t _KernelEnd;
+
+CRs getCRs()
 {
-	stivale2_tag *current_tag = (stivale2_tag*)stivale->tags;
-	for (;;) {
-		if (current_tag == null) {
-			return null;
-		}
-
-		if (current_tag->identifier == id) {
-			return current_tag;
-		}
-
-		current_tag = (stivale2_tag*)current_tag->next;
-	}
+    uint64_t cr0, cr2, cr3;
+    asm volatile (
+        "mov %%cr0, %%rax\n\t"
+        "mov %%eax, %0\n\t"
+        "mov %%cr2, %%rax\n\t"
+        "mov %%eax, %1\n\t"
+        "mov %%cr3, %%rax\n\t"
+        "mov %%eax, %2\n\t"
+    : "=m" (cr0), "=m" (cr2), "=m" (cr3)
+    : /* no input */
+    : "%rax"
+    );
+    return {cr0, cr2, cr3};
 }
-
-extern "C" void InitSSE();
 
 extern "C" void _start(stivale2_struct *info)
 {
-    boot_info_t bootVars;
+    asm volatile("sti");
+    stivale2_struct_tag_framebuffer *monitor = (stivale2_struct_tag_framebuffer*)stivale2_get_tag(info, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
+    stivale2_struct_tag_smp *smp = (stivale2_struct_tag_smp*)stivale2_get_tag(info, STIVALE2_STRUCT_TAG_SMP_ID);
+    stivale2_struct_tag_memmap *memoryMap = (stivale2_struct_tag_memmap*)stivale2_get_tag(info, STIVALE2_STRUCT_TAG_MEMMAP_ID);
+    stivale2_struct_tag_modules *mod = (stivale2_struct_tag_modules*)stivale2_get_tag(info, STIVALE2_STRUCT_TAG_MODULES_ID);
 
     Color scheme[8] = {
         scheme[0] = RGB(25, 25, 25),
@@ -79,39 +63,75 @@ extern "C" void _start(stivale2_struct *info)
         scheme[7] = RGB(255, 255, 255)
     };
 
-    initGDT();
-
-    stivale2_struct_tag_framebuffer *monitor = (stivale2_struct_tag_framebuffer*)stivale2_get_tag(info, STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID);
-    stivale2_struct_tag_smp *smp = (stivale2_struct_tag_smp*)stivale2_get_tag(info, STIVALE2_STRUCT_TAG_SMP_ID);
-    stivale2_struct_tag_memmap *memoryMap = (stivale2_struct_tag_memmap*)stivale2_get_tag(info, STIVALE2_STRUCT_TAG_MEMMAP_ID);
-
-    if(smp != NULL){
-        bootVars.cpu.processor_count = smp->cpu_count;
-        bootVars.cpu.bootstrap_processor_lapic_id = smp->bsp_lapic_id;
-        bootVars.cpu.acpi_processor_uid = smp->smp_info->processor_id;
-        bootVars.cpu.lapic_id = smp->smp_info->lapic_id;
-    }
-    if(memoryMap != NULL){
-        bootVars.mmap.entries = memoryMap->entries;
-        bootVars.mmap.length = memoryMap->memmap->length;
-        bootVars.mmap.type = memoryMap->memmap->type;
-
-        for(int i = 0; i < memoryMap->entries; ++i){
-            bootVars.mmap.memmap[i] = memoryMap->memmap[i];
-            stivale2_mmap_entry *internal = &memoryMap->memmap[i];
-        }
-    }
-
     Framebuffer backBuffer;
     backBuffer.Initialize(scheme, monitor, 16);
     backBuffer.SetColors(scheme[7], scheme[0]);
     backBuffer.Clear();
 
-    initIDT();
+    initGDT();
+
+    backBuffer.PrintF("CPU cores: %d\n", smp->cpu_count);
+
+    /*Memory*/
+    globalAllocator = PageFrameAllocator();
+    globalAllocator.Initialize(memoryMap);
+
+    globalAllocator.LockPages((void*)_KernelStart, ((uint64_t)_KernelStart - (uint64_t)_KernelEnd) / 4096 + 1);
+
+    PageTable *PML4 = (PageTable*)getCRs().cr3;
+    globalPageTableManager.PML4Addr = PML4;
+
+    for(uint64_t i = 0; i < getMemSize(memoryMap); i += 0x1000){
+        //ptManager.MapMemory((void*)i, (void*)i);
+    }
+
+    uint64_t fbSize = monitor->framebuffer_bpp * monitor->framebuffer_height * monitor->framebuffer_width + 0x1000;
+    globalAllocator.LockPages((void*)monitor->framebuffer_addr, fbSize / 0x1000 + 1);
+
+    for(uint64_t i = monitor->framebuffer_addr; i < monitor->framebuffer_addr + fbSize; i += 4096){
+        globalPageTableManager.MapMemory((void*)i, (void*)i);
+    }
+
+    asm volatile("mov %0, %%cr3" : : "r" (PML4));
+
+    memset((void*)monitor->framebuffer_addr, 0, monitor->framebuffer_bpp * monitor->framebuffer_height * monitor->framebuffer_width);
+    backBuffer.Clear();
+
+    initHeap((void*)0x000010000000, 0x10);
+
+    backBuffer.PrintF("Memory size: %u MB\n", getMemSize(memoryMap) / 1024 / 1024);
+
+    for(uint64_t i = 0; i < memoryMap->entries; ++i){
+        stivale2_mmap_entry entry = memoryMap->memmap[i];
+        backBuffer.PrintF("Start and end: %x - %x, type: ", entry.base, (entry.base + entry.length));
+        switch (entry.type)
+        {
+            case STIVALE2_MMAP_USABLE:
+                backBuffer.PrintF("Usable memory\n");
+                break;
+            case STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE:
+                backBuffer.PrintF("Bootloader reclaimable\n");
+                break;
+            case STIVALE2_MMAP_KERNEL_AND_MODULES:
+                backBuffer.PrintF("Kernel and modules\n");
+                break;
+            case STIVALE2_MMAP_FRAMEBUFFER:
+                backBuffer.PrintF("Framebuffer\n");
+                break;
+            default:
+                backBuffer.PrintF("Default memory\n");
+                break;
+        }
+    }
+
+    /*Interrupts*/
+    initIDT(&backBuffer);
 
     initPIT(100);
     initKeyboard(backBuffer);
     mouseInit(backBuffer);
+
+    //void *tmp = malloc(100);
 
     //initATA();
     main(info, &backBuffer);

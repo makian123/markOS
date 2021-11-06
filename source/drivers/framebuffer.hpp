@@ -66,6 +66,7 @@ class Framebuffer{
         void PrintF(char *c, ...);
         void Log(int type, uint8_t *c, ...);
         void Log(int type, char *c, ...);
+        void Panic(uint8_t *c, ...);
 
         void PrintBMP(int xPos, int yPos, BITMAP bmp);
         void CursorMove(uint8_t ch);

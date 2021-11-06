@@ -36,25 +36,14 @@ int memcmp(void *first, void *second, size_t len){
     return 0;
 }
 
-uint64_t getUsableMemSize(boot_info_t *bootInfo){
-    static uint64_t usableMemBytes = 0;
-
-    for(int i = 0; i < bootInfo->mmap.entries; ++i){
-        if(bootInfo->mmap.memmap[i].type != STIVALE2_MMAP_USABLE && bootInfo->mmap.memmap[i].type != STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE) continue;
-
-        usableMemBytes += bootInfo->mmap.memmap[i].length;
-    }
-
-    return usableMemBytes;
-}
-
-uint64_t getMemSize(boot_info_t *bootInfo){
+uint64_t getMemSize(stivale2_struct_tag_memmap *memmap){
     static uint64_t memBytes = 0;
     if (memBytes > 0) return memBytes;
 
-    for (int i = 0; i < bootInfo->mmap.entries; i++)
+    for (int i = 0; i < memmap->entries; i++)
     {
-        memBytes += bootInfo->mmap.memmap[i].length;
+        if(memmap->memmap[i].type == STIVALE2_MMAP_USABLE)
+            memBytes += memmap->memmap[i].length;
     }
 
     return memBytes;

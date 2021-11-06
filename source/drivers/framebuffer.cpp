@@ -20,15 +20,16 @@ Color RGB(uint8_t r, uint8_t g, uint8_t b, uint8_t a){
 
 Color HEX2RGB(uint32_t hex){
     Color output;
-    output.red = ((hex >> 16) & 0xFF);
-    output.green = ((hex >> 8) & 0xFF);
-    output.blue = (hex & 0xFF);
+    output.red = ((hex >> 24) & 0xFF);
+    output.green = ((hex >> 16) & 0xFF);
+    output.blue = ((hex >> 8) & 0xFF);
+    output.alpha = (hex & 0xFF);
 
     return output;
 }
 
 uint32_t GetColor(Color col){
-    return (((col.red & 0xFF) << 16) + ((col.green & 0xFF) << 8) + (col.blue & 0xFF));
+    return (( ((col.red & 0xFF) << 24) + ((col.green & 0xFF) << 16) + ((col.blue & 0xFF) << 8) + (col.alpha & 0xFF) ));
 }
 
 void Framebuffer::Initialize(Color scheme[8], stivale2_struct_tag_framebuffer *info, int fontSpecifier){
@@ -56,14 +57,23 @@ uint32_t Framebuffer::GetPixel(int x, int y){
     size_t pixel = y * thisFB->framebuffer_width + x;
     uint32_t *fb = (uint32_t *)thisFB->framebuffer_addr;
     
-    return fb[pixel];
+    return (fb[pixel] << 8) + 255;
 }
 
 void Framebuffer::DrawPixel(int x, int y, uint32_t color){
     size_t pixel = y * thisFB->framebuffer_width + x;
     uint32_t *fb = (uint32_t *)thisFB->framebuffer_addr;
+    uint8_t alpha = (color << 24) >> 24;
 
-    fb[pixel] = color;
+    if(alpha == 0){
+        return;
+    }
+    else if(alpha == 255){
+        fb[pixel] = color >> 8;
+        return;
+    }
+
+    fb[pixel] = (GetPixel(x, y) * (alpha << 8 + alpha) + color * ((alpha ^ 0xFF) << 8 + (alpha ^ 0xFF))) >> 16;
 }
 
 void Framebuffer::DrawHorizontalLine(long startX, long startY, long dx, Color col){
@@ -315,7 +325,7 @@ void Framebuffer::PrintF(uint8_t *c, ...){
                 break;
             case 'x':
                 PrintS("0x");
-                PrintS(itoa(va_arg(lst, long), buffer, 10));
+                PrintS(to_hstring(va_arg(lst, long)));
                 break;
         }
         c++;
@@ -353,8 +363,7 @@ void Framebuffer::PrintF(char *c, ...){
                 PrintS(itoa(va_arg(lst, uint64_t), buffer, 10));
                 break;
             case 'x':
-                PrintS("0x");
-                PrintS(itoa(va_arg(lst, long), buffer, 10));
+                PrintS(to_hstring(va_arg(lst, long)));
                 break;
         }
         c++;
@@ -382,34 +391,41 @@ void Framebuffer::Log(int type, uint8_t *c, ...){
 
     va_list list;
     PrintF(c, list);
-    va_end(list);
     PrintC('\n');
 
     SetColors(RGB(255, 255, 255), RGB(0, 0, 0));
 }
 void Framebuffer::Log(int type, char *c, ...){
+    PrintC('[');
     switch (type){
         case SUCCESS:
             SetColors(RGB(0, 255, 0), RGB(0, 0, 0));
+            PrintS("SUCCES");
             break;
         case WARNING:
             SetColors(RGB(255, 200, 0), RGB(0, 0, 0));
+            PrintS("WARNING");
             break;
         case ERROR:
             SetColors(RGB(255, 0, 0), RGB(0, 0, 0));
+            PrintS("ERROR");
             break;
         default:
             break;
     }
+    SetColors(RGB(255, 255, 255), RGB(0, 0, 0));
+    PrintS("] ");
 
     va_list list;
     PrintF(c, list);
-    va_end(list);
     PrintC('\n');
-
-    SetColors(RGB(255, 255, 255), RGB(0, 0, 0));
 }
-
+void Framebuffer::Panic(uint8_t *c, ...){
+    Clear();
+    va_list lst;
+    PrintF(c, lst);
+    asm("hlt");
+}
 //Others
 
 void Framebuffer::CursorMove(uint8_t ch){

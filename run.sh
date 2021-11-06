@@ -1,1 +1,1 @@
-"D:\qemu\qemu-system-x86_64.exe" -cpu max -smp 8 -monitor stdio -cdrom image.iso -drive if=pflash,format=raw,unit=0,file=OVMF_CODE-pure-efi.fd,readonly=on -drive if=pflash,format=raw,unit=1,file=OVMF_VARS-pure-efi.fd 
+"D:\qemu\qemu-system-x86_64.exe" -d int -cpu max -smp 8 -no-reboot -no-shutdown -monitor stdio -cdrom image.iso -drive if=pflash,format=raw,unit=0,file=OVMF_CODE-pure-efi.fd,readonly=on -drive if=pflash,format=raw,unit=1,file=OVMF_VARS-pure-efi.fd 

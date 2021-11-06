@@ -2,6 +2,7 @@
 #include <system/idt/idt.hpp>
 
 int_handler_t interrupt_handlers[256];
+Framebuffer *mainFB;
 
 void idt_set_descriptor(uint8_t vector, void* isr)
 {
@@ -20,8 +21,9 @@ void registerInterrupt(uint8_t n, int_handler_t handler);
 static void not_implemented(struct interrupt_registers *);
 void installISR();
 
-void initIDT()
+void initIDT(Framebuffer *fb)
 {
+    mainFB = fb;
     idtr.base = (uintptr_t)&idt[0];
     idtr.limit = (uint16_t)((sizeof(idtDesc_t) * 256) - 1);
 
@@ -78,6 +80,8 @@ static const char *exception_messages[32] = {
 
 void isrHandler(struct interrupt_registers *regs)
 {
+    mainFB->Log(ERROR, (char*)exception_messages[regs->int_no]);
+    mainFB->PrintF(" at line: %x", regs->rip);
     __asm__ volatile ("cli; hlt");
 }
 

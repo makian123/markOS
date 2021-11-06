@@ -9,7 +9,7 @@ typedef uint64_t size_t;
 
 
 #define null 0
-#define NULL ((void*)null)
+#define NULL nullptr
 
 typedef struct BitmapStruct{
     uint8_t header[54];

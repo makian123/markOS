@@ -1,5 +1,7 @@
 #pragma once
 
+#include <drivers/framebuffer.hpp>
+
 #define PIC1            0x20
 #define PIC2            0xA0
 #define PIC1_COMMAND    PIC1
@@ -114,7 +116,7 @@ static idtEntry_t idt[256];
 
 static idtr_t idtr;
 
-void initIDT();
+void initIDT(Framebuffer *fb);
 
 typedef void (*int_handler_t) (struct interrupt_registers *registers);
 
